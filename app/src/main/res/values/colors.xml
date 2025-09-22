@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="backgroundLogin">#F5F7FA</color>
+    <color name="colorPrimary">#273036</color>
+    <color name="colorPrimaryDark">#273036</color>
+    <color name="colorPrimaryLight">#718792</color>
+    <color name="colorBottomLight">#ffd88f</color>
+    <color name="marron">#804000</color>
+    <color name="marron_dark">#5c330a</color>
+    <color name="cafe">#603318</color>
+    <color name="cafe_transparente_50">#80603318</color>
+    <color name="cafe_transparente_25">#40603318</color>
+    <color name="cafe_opaco">#F0603318</color>
+    <color name="cafePrincipal">#F08343</color>
+    <color name="green">#3a6c64</color>
+</resources>

@@ -1,0 +1,87 @@
+{
+  "project_info": {
+    "project_number": "141305011827",
+    "firebase_url": "https://gestion-turnos-mano-artesano-default-rtdb.firebaseio.com",
+    "project_id": "gestion-turnos-mano-artesano",
+    "storage_bucket": "gestion-turnos-mano-artesano.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141305011827:android:3b127ee54385a34c535406",
+        "android_client_info": {
+          "package_name": "com.example.manodelartesanoaprobacionturnos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuu41RwfBhX_jXno56XlpbpZxsWV-VNiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141305011827:android:5f1a6c7247a3db2c535406",
+        "android_client_info": {
+          "package_name": "com.example.manodelartesanocrearturnos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuu41RwfBhX_jXno56XlpbpZxsWV-VNiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141305011827:android:dc6d7bded430f98b535406",
+        "android_client_info": {
+          "package_name": "com.example.manodelartesanogestionturnosprincipal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuu41RwfBhX_jXno56XlpbpZxsWV-VNiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141305011827:android:4855a8675bad02c6535406",
+        "android_client_info": {
+          "package_name": "com.example.manodelartesanogestionturnostv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuu41RwfBhX_jXno56XlpbpZxsWV-VNiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
