@@ -125,15 +125,21 @@ class VentanaPrincipal : AppCompatActivity() {
 
         // Escuchar cambios directos del usuario en el EditText
         ContadorPersonas.doOnTextChanged { text, _, _, _ ->
-            val valorActual = text.toString().toIntOrNull()
-            if (valorActual == null || valorActual <= 0) {
-                contador = 1
-                ContadorPersonas.setText("1")
-                ContadorPersonas.setSelection(ContadorPersonas.text.length)
-            } else {
+            val valorActual = text?.toString()?.toIntOrNull()
+
+            if (text.isNullOrEmpty()) {
+                // ✅ Si el usuario borra todo, dejamos vacío
+                contador = 0
+                txtTiempo.text = "Tiempo: 00:00 seg"
+            } else if (valorActual != null && valorActual > 0) {
+                // ✅ Si escribe un número válido mayor a 0
                 contador = valorActual
+                txtTiempo.text = "Tiempo: ${mostrarTiempo(contador)}"
+            } else {
+                // ✅ Si escribe 0 o algo inválido, solo actualizamos el texto de tiempo
+                contador = 0
+                txtTiempo.text = "Tiempo: 00:00 seg"
             }
-            txtTiempo.text = "Tiempo: ${mostrarTiempo(contador)}"
         }
 
         // Crear Turno
@@ -187,7 +193,6 @@ class VentanaPrincipal : AppCompatActivity() {
                             d.dismiss()
                         }.setPositiveButton("Aceptar"){ d, _ ->
 
-                            // ✅ Ahora sí sumamos tiempo solo si confirman
                             tiempoAcumuladoSegundos += contador * 20
                             val tiempoFinal = formatearTiempo(tiempoAcumuladoSegundos)
 
@@ -205,7 +210,7 @@ class VentanaPrincipal : AppCompatActivity() {
                             BD.child(valorNombre).child(IdTurnoE).setValue(map).addOnSuccessListener {
                                 AtraccionSeleccionada.setText("Nada Selecionado")
                                 edtxNumero.setText("")
-                                ContadorPersonas.setText("1")
+                                ContadorPersonas.setText("")
                                 txtTiempo.text = "Tiempo: 00:20 seg"
                                 contador = 1
                                 Toast.makeText(this, "Turno $turnoFormateado para $valorNombre creado con exito", Toast.LENGTH_SHORT).show()
