@@ -128,15 +128,15 @@ class VentanaPrincipal : AppCompatActivity() {
             val valorActual = text?.toString()?.toIntOrNull()
 
             if (text.isNullOrEmpty()) {
-                // ✅ Si el usuario borra todo, dejamos vacío
+                // Si el usuario borra todo, dejamos vacío
                 contador = 0
                 txtTiempo.text = "Tiempo: 00:00 seg"
             } else if (valorActual != null && valorActual > 0) {
-                // ✅ Si escribe un número válido mayor a 0
+                // Si escribe un número válido mayor a 0
                 contador = valorActual
                 txtTiempo.text = "Tiempo: ${mostrarTiempo(contador)}"
             } else {
-                // ✅ Si escribe 0 o algo inválido, solo actualizamos el texto de tiempo
+                // Si escribe 0 o algo inválido, solo actualizamos el texto de tiempo
                 contador = 0
                 txtTiempo.text = "Tiempo: 00:00 seg"
             }
@@ -148,7 +148,6 @@ class VentanaPrincipal : AppCompatActivity() {
             val numeroTelefonico = edtxNumero.text?.toString()?.trim() ?: ""
             val IdTurnoE = BD.push().key.toString()
             val nombreAtraccion = AtraccionSeleccionada.text.toString()
-
 
             if (nombreAtraccion == "Nada Selecionado") {
                 Toast.makeText(this, "Seleccionar una atracción", Toast.LENGTH_SHORT).show()
@@ -173,10 +172,6 @@ class VentanaPrincipal : AppCompatActivity() {
 
                     // acumular tiempo
                     val tiempoPreview = formatearTiempo(tiempoAcumuladoSegundos + contador * 20)
-
-                    //val tiempoPreview = formatearTiempo(tiempoAcumuladoSegundos + contador * 20)
-
-                    //val tiempoFinal = formatearTiempo(tiempoAcumuladoSegundos) // lo pasamos a mm:ss
 
                     val dialogView = layoutInflater.inflate(R.layout.dialog_confirmar_info, null)
                     dialogView.findViewById<TextView>(R.id.txtDatosAtraccionTurno).text = valorNombre
@@ -204,10 +199,11 @@ class VentanaPrincipal : AppCompatActivity() {
                             map["NumeroTelefonico"] = numeroTelefonico
                             map["Tiempo"] = actualizarTiempo(contador)
                             map["TiempoEspera"] = tiempoFinal
+                            map["Estado"] = "En Espera"
 
                             databaseReference.setValue(tiempoFinal)
 
-                            BD.child(valorNombre).child(IdTurnoE).setValue(map).addOnSuccessListener {
+                            BD.child(IdTurnoE).setValue(map).addOnSuccessListener {
                                 AtraccionSeleccionada.setText("Nada Selecionado")
                                 edtxNumero.setText("")
                                 ContadorPersonas.setText("")
@@ -218,9 +214,9 @@ class VentanaPrincipal : AppCompatActivity() {
                                 // ---------------------------
                                 val valorNombre = nombreAtraccion
 
-                                val mensajemenor10min = "Dirígete de inmediato a la Atracción: '$valorNombre' el turno '$turnoFormateado' está próximo a ser llamado"
-                                val mensajeentre11a30min = "Tu turno es el '$turnoFormateado', puedes hacer un recorrido corto por el parque, pero por favor mantente cerca de '$valorNombre', ya que podrías ser llamado en cualquier momento. Podrás consultar tu turno a través de los códigos QR que estarán por todo el parque"
-                                val mensajemayor30min = "Tu turno es el '$turnoFormateado', te invitamos a que conozcas todo lo que Pueblito de Barro tiene para ti mientras llega tu turno para '$valorNombre'. Podrás consultar tu turno a través de los códigos QR que estarán por todo el parque"
+                                val mensajemenor10min = "⚠️ Aviso de turno ⚠️\n\nDirígete de inmediato a la Atracción: *$valorNombre*\nEl turno *$turnoFormateado* está próximo a ser llamado en *$tiempoFinal min* ⏳\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
+                                val mensajeentre11a30min = "⚠️ Aviso de turno ⚠️\n\nTu turno es el *'$turnoFormateado'*, puedes hacer un recorrido corto por el parque.\nSeras llamado en *$tiempoFinal min* ⏳, pero por favor mantente cerca de '$valorNombre', ya que podrías ser llamado en cualquier momento.\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
+                                val mensajemayor30min = "⚠️ Aviso de turno ⚠️\n\nTu turno es el *'$turnoFormateado'*, te invitamos a que conozcas todo lo que Pueblito de Barro tiene para ti mientras llega tu turno para '$valorNombre'\nSeras llamado en *$tiempoFinal min* ⏳.\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
 
                                 val mensajeEnviar = when {
                                     tiempoAcumuladoSegundos <= 600 -> mensajemenor10min   // <= 10 minutos (600 seg)
