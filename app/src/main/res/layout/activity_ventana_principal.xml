@@ -29,7 +29,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Seleccionar Atracción"
+                android:text="Atracciones"
                 android:textAlignment="center"
                 android:textSize="30sp"
                 android:layout_marginTop="20dp" />
@@ -46,10 +46,11 @@
                 android:id="@+id/AtraccionSeleccionada"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nada Selecionado"
+                android:text="Mano Del Artesano"
                 android:textAlignment="center"
                 android:textSize="27sp"
-                android:layout_marginTop="20dp" />
+                android:layout_marginTop="20dp"
+                android:visibility="gone"/>
 
             <View
                 android:layout_width="match_parent"
@@ -66,45 +67,45 @@
                 android:textSize="27sp"
                 android:layout_marginTop="20dp" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20sp"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ImagenProductoMesa"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
-
-            <ImageView
-                android:id="@+id/disminuir"
-                android:layout_width="60sp"
-                android:layout_height="60sp"
-                android:layout_marginEnd="10sp"
-                android:layout_gravity="center"
-                android:src="@drawable/baseline_remove_circle_outline_24" />
-
-            <EditText
-                android:id="@+id/ContadorPersonas"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20sp"
                 android:layout_gravity="center"
-                android:hint="1"
-                android:textSize="40sp"
-                android:textStyle="bold"
-                android:inputType="number"
-                android:digits="0123456789"
-                android:imeOptions="actionDone"/>
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ImagenProductoMesa"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-            <ImageView
-                android:id="@+id/agregar"
-                android:layout_width="60sp"
-                android:layout_height="60sp"
-                android:layout_gravity="center"
-                android:layout_marginStart="10sp"
-                android:src="@drawable/baseline_add_circle_outline_24" />
+                <ImageView
+                    android:id="@+id/disminuir"
+                    android:layout_width="60sp"
+                    android:layout_height="60sp"
+                    android:layout_marginEnd="10sp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/baseline_remove_circle_outline_24" />
 
-        </LinearLayout>
+                <EditText
+                    android:id="@+id/ContadorPersonas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:hint="1"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    android:inputType="number"
+                    android:digits="0123456789"
+                    android:imeOptions="actionDone"/>
+
+                <ImageView
+                    android:id="@+id/agregar"
+                    android:layout_width="60sp"
+                    android:layout_height="60sp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10sp"
+                    android:src="@drawable/baseline_add_circle_outline_24" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/txtTiempo"
@@ -133,7 +134,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputLayoutPhone"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
+                android:layout_width="500dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:hint="Celular:"
@@ -144,6 +145,7 @@
                     android:id="@+id/edtxNumero"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="30dp"
                     android:inputType="phone" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -163,6 +165,11 @@
                 android:backgroundTint="@color/green"
                 android:textColor="@color/white"
                 android:layout_marginTop="20dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:visibility="invisible"/>
 
         </LinearLayout>
 

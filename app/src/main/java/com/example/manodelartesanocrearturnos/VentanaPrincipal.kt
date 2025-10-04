@@ -68,7 +68,7 @@ class VentanaPrincipal : AppCompatActivity() {
             }
         })
 
-        // Configuracion Ver Turnos
+        // Configuracion Ver Atracciones
         RevVerAtraccion.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         listaAtracciones = arrayListOf<AtraccionModel>()
         RevVerAtraccion.visibility = View.GONE
@@ -86,7 +86,8 @@ class VentanaPrincipal : AppCompatActivity() {
                     val adapter = VerAtraccionAdapter(listaAtracciones) { textoSeleccionado ->
                         AtraccionSeleccionada.setText(textoSeleccionado.Nombre)
                         valorId = textoSeleccionado.Id.toString()
-                        valorNombre = textoSeleccionado.Nombre.toString()
+                        //valorNombre = textoSeleccionado.Nombre.toString()
+                        valorNombre = "Mano Del Artesano"
                         valorTurno = textoSeleccionado.Turno.toString()
                     }
                     RevVerAtraccion.adapter = adapter
@@ -144,120 +145,206 @@ class VentanaPrincipal : AppCompatActivity() {
 
         // Crear Turno
         btnSubirInfo.setOnClickListener {
-            val BD = FirebaseDatabase.getInstance().getReference("TurnosEnEspera")
+            val BDTurnosAcumulados = FirebaseDatabase.getInstance().getReference("TurnosAcumulados")
             val numeroTelefonico = edtxNumero.text?.toString()?.trim() ?: ""
-            val IdTurnoE = BD.push().key.toString()
+            val IdTurnoE = BDTurnosAcumulados.push().key.toString()
             val nombreAtraccion = AtraccionSeleccionada.text.toString()
 
-            if (nombreAtraccion == "Nada Selecionado") {
-                Toast.makeText(this, "Seleccionar una atracción", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            if (numeroTelefonico.isEmpty()){
-                Toast.makeText(this, "Ingrese un número telefonico", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
 
             val atraccionRef = FirebaseDatabase.getInstance()
                 .getReference("Atracciones")
-                .child(valorId)
+                .child("Mano Del Artesano")
 
-            atraccionRef.get().addOnSuccessListener { snapshot ->
-                if (snapshot.exists()) {
+            if (numeroTelefonico.isEmpty()){
+                atraccionRef.get().addOnSuccessListener { snapshot ->
+                    if (snapshot.exists()) {
 
-                    val ultimoTurno = snapshot.child("Turno").getValue(Int::class.java) ?: 0
-                    val nuevoTurno = ultimoTurno + 1
-                    val turnoFormateado = String.format("%04d", nuevoTurno) // ejemplo: 0001, 0002
+                        val ultimoTurno = snapshot.child("Turno").getValue(Int::class.java) ?: 0
+                        val nuevoTurno = ultimoTurno + 1
+                        val turnoFormateado = String.format("%04d", nuevoTurno) // ejemplo: 0001, 0002
+                        var tiempoPreview = ""
 
-                    // acumular tiempo
-                    val tiempoPreview = formatearTiempo(tiempoAcumuladoSegundos + contador * 20)
+                        // acumular tiempo
 
-                    val dialogView = layoutInflater.inflate(R.layout.dialog_confirmar_info, null)
-                    dialogView.findViewById<TextView>(R.id.txtDatosAtraccionTurno).text = valorNombre
-                    dialogView.findViewById<TextView>(R.id.txtDatosNumeroTurno).text = turnoFormateado
-                    dialogView.findViewById<TextView>(R.id.txtDatosPersonasTurno).text = ContadorPersonas.text
-                    dialogView.findViewById<TextView>(R.id.txtDatosTelefonoTurno).text = numeroTelefonico
-                    dialogView.findViewById<TextView>(R.id.txtDatosTiempoTurno).text = "${actualizarTiempo(contador)} min"
-                    dialogView.findViewById<TextView>(R.id.txtTiempoEsperaTurno).text = "$tiempoPreview min"
+                        if (tiempoAcumuladoSegundos == 0){
+                            tiempoPreview = "0"
+                        }else{
+                            tiempoPreview = formatearTiempo(tiempoAcumuladoSegundos + contador * 20)
+                        }
 
-                    val dialog = AlertDialog.Builder(this)
-                        .setView(dialogView)
-                        .setCancelable(false)
-                        .setNegativeButton("Cancelar") { d, _ ->
-                            d.dismiss()
-                        }.setPositiveButton("Aceptar"){ d, _ ->
+                        val dialogView = layoutInflater.inflate(R.layout.dialog_confirmar_info, null)
+                        dialogView.findViewById<TextView>(R.id.txtDatosAtraccionTurno).text = "Mano Del Artesano"
+                        dialogView.findViewById<TextView>(R.id.txtDatosNumeroTurno).text = turnoFormateado
+                        dialogView.findViewById<TextView>(R.id.txtDatosPersonasTurno).text = ContadorPersonas.text
+                        dialogView.findViewById<TextView>(R.id.txtDatosTelefonoTurno).text = "No Registrado"
+                        dialogView.findViewById<TextView>(R.id.txtDatosTiempoTurno).text = "${actualizarTiempo(contador)} min"
+                        dialogView.findViewById<TextView>(R.id.txtTiempoEsperaTurno).text = "$tiempoPreview min"
 
-                            tiempoAcumuladoSegundos += contador * 20
-                            val tiempoFinal = formatearTiempo(tiempoAcumuladoSegundos)
+                        val dialog = AlertDialog.Builder(this)
+                            .setView(dialogView)
+                            .setCancelable(false)
+                            .setNegativeButton("Cancelar") { d, _ ->
+                                d.dismiss()
+                            }.setPositiveButton("Aceptar"){ d, _ ->
 
-                            val map: MutableMap<String, Any> = HashMap()
-                            map["Id"] = IdTurnoE
-                            map["Atraccion"] = valorNombre
-                            map["TurnoAsignado"] = turnoFormateado
-                            map["NumeroPersonas"] = ContadorPersonas.text.toString()
-                            map["NumeroTelefonico"] = numeroTelefonico
-                            map["Tiempo"] = actualizarTiempo(contador)
-                            map["TiempoEspera"] = tiempoFinal
-                            map["Estado"] = "En Espera"
+                                tiempoAcumuladoSegundos += contador * 20
+                                val tiempoFinal = formatearTiempo(tiempoAcumuladoSegundos)
 
-                            databaseReference.setValue(tiempoFinal)
+                                val map: MutableMap<String, Any> = HashMap()
+                                map["Id"] = IdTurnoE
+                                map["Atraccion"] = "Mano Del Artesano"
+                                map["TurnoAsignado"] = turnoFormateado
+                                map["NumeroPersonas"] = ContadorPersonas.text.toString()
+                                map["NumeroTelefonico"] = "No Registrado"
+                                map["Tiempo"] = actualizarTiempo(contador)
+                                map["TiempoEspera"] = tiempoPreview
+                                map["Estado"] = "En Espera"
 
-                            BD.child(IdTurnoE).setValue(map).addOnSuccessListener {
-                                AtraccionSeleccionada.setText("Nada Selecionado")
-                                edtxNumero.setText("")
-                                ContadorPersonas.setText("")
-                                txtTiempo.text = "Tiempo: 00:20 seg"
-                                contador = 1
-                                Toast.makeText(this, "Turno $turnoFormateado para $valorNombre creado con exito", Toast.LENGTH_SHORT).show()
-                                // 📲 Enviar WhatsApp según el tiempo
-                                // ---------------------------
-                                val valorNombre = nombreAtraccion
+                                databaseReference.setValue(tiempoFinal)
 
-                                val mensajemenor10min = "⚠️ Aviso de turno ⚠️\n\nDirígete de inmediato a la Atracción: *$valorNombre*\nEl turno *$turnoFormateado* está próximo a ser llamado en *$tiempoFinal min* ⏳\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
-                                val mensajeentre11a30min = "⚠️ Aviso de turno ⚠️\n\nTu turno es el *'$turnoFormateado'*, puedes hacer un recorrido corto por el parque.\nSeras llamado en *$tiempoFinal min* ⏳, pero por favor mantente cerca de '$valorNombre', ya que podrías ser llamado en cualquier momento.\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
-                                val mensajemayor30min = "⚠️ Aviso de turno ⚠️\n\nTu turno es el *'$turnoFormateado'*, te invitamos a que conozcas todo lo que Pueblito de Barro tiene para ti mientras llega tu turno para '$valorNombre'\nSeras llamado en *$tiempoFinal min* ⏳.\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
+                                BDTurnosAcumulados.child(IdTurnoE).setValue(map).addOnSuccessListener {
+                                    AtraccionSeleccionada.setText("Mano Del Artesano")
+                                    edtxNumero.setText("")
+                                    ContadorPersonas.setText("")
+                                    txtTiempo.text = "Tiempo: 00:20 seg"
+                                    contador = 1
+                                    Toast.makeText(this, "Turno $turnoFormateado para $valorNombre creado con exito", Toast.LENGTH_SHORT).show()
 
-                                val mensajeEnviar = when {
-                                    tiempoAcumuladoSegundos <= 600 -> mensajemenor10min   // <= 10 minutos (600 seg)
-                                    tiempoAcumuladoSegundos in 661..1800 -> mensajeentre11a30min // entre 11 y 30 min
-                                    else -> mensajemayor30min // más de 30 min
+                                    // Quitar el foco del EditText
+                                    edtxNumero.clearFocus()
+
+                                    // Ocultar el teclado
+                                    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                                    imm.hideSoftInputFromWindow(edtxNumero.windowToken, 0)
+
+                                }.addOnFailureListener {
+                                    Toast.makeText(this, "Error al crear el turno", Toast.LENGTH_SHORT).show()
                                 }
 
-                                val numeroTelefonicoConPrefijo = if (numeroTelefonico.startsWith("+57")) {
-                                    numeroTelefonico
-                                } else {
-                                    "+57$numeroTelefonico"
+                                // Guardar nuevo turno en Firebase
+                                atraccionRef.child("Turno").setValue(nuevoTurno)
+                            }.create()
+
+                        dialog.show()
+
+                    } else {
+                        // Si la atracción no tiene campo UltimoTurno aún, se crea con 1
+                        atraccionRef.child("Turno").setValue(1)
+                    }
+                }
+            }else{
+                atraccionRef.get().addOnSuccessListener { snapshot ->
+                    if (snapshot.exists()) {
+
+                        val ultimoTurno = snapshot.child("Turno").getValue(Int::class.java) ?: 0
+                        val nuevoTurno = ultimoTurno + 1
+                        val turnoFormateado = String.format("%04d", nuevoTurno) // ejemplo: 0001, 0002
+                        var tiempoPreview = ""
+
+                        // acumular tiempo
+
+                        if (tiempoAcumuladoSegundos == 0){
+                            tiempoPreview = "0"
+                        }else{
+                            tiempoPreview = formatearTiempo(tiempoAcumuladoSegundos + contador * 20)
+                        }
+
+                        val dialogView = layoutInflater.inflate(R.layout.dialog_confirmar_info, null)
+                        dialogView.findViewById<TextView>(R.id.txtDatosAtraccionTurno).text = "Mano Del Artesano"
+                        dialogView.findViewById<TextView>(R.id.txtDatosNumeroTurno).text = turnoFormateado
+                        dialogView.findViewById<TextView>(R.id.txtDatosPersonasTurno).text = ContadorPersonas.text
+                        dialogView.findViewById<TextView>(R.id.txtDatosTelefonoTurno).text = numeroTelefonico
+                        dialogView.findViewById<TextView>(R.id.txtDatosTiempoTurno).text = "${actualizarTiempo(contador)} min"
+                        dialogView.findViewById<TextView>(R.id.txtTiempoEsperaTurno).text = "$tiempoPreview min"
+
+                        val dialog = AlertDialog.Builder(this)
+                            .setView(dialogView)
+                            .setCancelable(false)
+                            .setNegativeButton("Cancelar") { d, _ ->
+                                d.dismiss()
+                            }.setPositiveButton("Aceptar"){ d, _ ->
+
+                                tiempoAcumuladoSegundos += contador * 20
+                                val tiempoFinal = formatearTiempo(tiempoAcumuladoSegundos)
+
+                                val map: MutableMap<String, Any> = HashMap()
+                                map["Id"] = IdTurnoE
+                                map["Atraccion"] = "Mano Del Artesano"
+                                map["TurnoAsignado"] = turnoFormateado
+                                map["NumeroPersonas"] = ContadorPersonas.text.toString()
+                                map["NumeroTelefonico"] = numeroTelefonico
+                                map["Tiempo"] = actualizarTiempo(contador)
+                                map["TiempoEspera"] = tiempoPreview
+                                map["Estado"] = "En Espera"
+
+                                databaseReference.setValue(tiempoFinal)
+
+                                BDTurnosAcumulados.child(IdTurnoE).setValue(map).addOnSuccessListener {
+                                    AtraccionSeleccionada.setText("Mano Del Artesano")
+                                    edtxNumero.setText("")
+                                    ContadorPersonas.setText("")
+                                    txtTiempo.text = "Tiempo: 00:20 seg"
+                                    contador = 1
+                                    Toast.makeText(this, "Turno $turnoFormateado para $valorNombre creado con exito", Toast.LENGTH_SHORT).show()
+                                    // 📲 Enviar WhatsApp según el tiempo
+                                    // ---------------------------
+                                    val valorNombre = nombreAtraccion
+
+                                    val mensajeSintiempoEspera = "⚠️ Aviso de turno ⚠️\n\nDirígete de inmediato a la Atracción: *$valorNombre*\nEl turno *$turnoFormateado* es el siguiente en pasar\n\nGracias por visitar el Pueblito de Barro, disfruta de tu atracción"
+                                    val mensajemenor10min = "⚠️ Aviso de turno ⚠️\n\nDirígete de inmediato a la Atracción: *$valorNombre*\nEl turno *$turnoFormateado* está próximo a ser llamado en *$tiempoFinal min* ⏳\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
+                                    val mensajeentre11a30min = "⚠️ Aviso de turno ⚠️\n\nTu turno es el *'$turnoFormateado'*, puedes hacer un recorrido corto por el parque.\nSeras llamado en *$tiempoFinal min* ⏳, pero por favor mantente cerca de '$valorNombre', ya que podrías ser llamado en cualquier momento.\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
+                                    val mensajemayor30min = "⚠️ Aviso de turno ⚠️\n\nTu turno es el *'$turnoFormateado'*, te invitamos a que conozcas todo lo que Pueblito de Barro tiene para ti mientras llega tu turno para '$valorNombre'\nSeras llamado en *$tiempoFinal min* ⏳.\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
+
+                                    val mensajeEnviar = when {
+                                        // Rango 1: exactamente 0
+                                        tiempoAcumuladoSegundos == 0 -> mensajeSintiempoEspera
+
+                                        // Rango 2: menor a 10 min, excluyendo cero
+                                        tiempoAcumuladoSegundos in 1..599 -> mensajemenor10min
+
+                                        // Rango 3: entre 11 y 30 min (660s = 11:00)
+                                        tiempoAcumuladoSegundos in 660..1800 -> mensajeentre11a30min
+
+                                        // Rango 4: mayor a 30 min
+                                        else -> mensajemayor30min
+                                    }
+
+
+                                    val numeroTelefonicoConPrefijo = if (numeroTelefonico.startsWith("+57")) {
+                                        numeroTelefonico
+                                    } else {
+                                        "+57$numeroTelefonico"
+                                    }
+
+                                    try {
+                                        val uri = Uri.parse("https://api.whatsapp.com/send?phone=$numeroTelefonicoConPrefijo&text=${Uri.encode(mensajeEnviar)}")
+                                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                                        intent.setPackage("com.whatsapp") // abre directamente WhatsApp
+                                        startActivity(intent)
+                                    } catch (e: Exception) {
+                                        Toast.makeText(this, "WhatsApp no está instalado", Toast.LENGTH_SHORT).show()
+                                    }
+                                    // Quitar el foco del EditText
+                                    edtxNumero.clearFocus()
+
+                                    // Ocultar el teclado
+                                    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                                    imm.hideSoftInputFromWindow(edtxNumero.windowToken, 0)
+
+                                }.addOnFailureListener {
+                                    Toast.makeText(this, "Error al crear el turno", Toast.LENGTH_SHORT).show()
                                 }
 
-                                try {
-                                    val uri = Uri.parse("https://api.whatsapp.com/send?phone=$numeroTelefonicoConPrefijo&text=${Uri.encode(mensajeEnviar)}")
-                                    val intent = Intent(Intent.ACTION_VIEW, uri)
-                                    intent.setPackage("com.whatsapp") // abre directamente WhatsApp
-                                    startActivity(intent)
-                                } catch (e: Exception) {
-                                    Toast.makeText(this, "WhatsApp no está instalado", Toast.LENGTH_SHORT).show()
-                                }
-                                // Quitar el foco del EditText
-                                edtxNumero.clearFocus()
+                                // Guardar nuevo turno en Firebase
+                                atraccionRef.child("Turno").setValue(nuevoTurno)
+                            }.create()
 
-                                // Ocultar el teclado
-                                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                                imm.hideSoftInputFromWindow(edtxNumero.windowToken, 0)
+                        dialog.show()
 
-                            }.addOnFailureListener {
-                                Toast.makeText(this, "Error al crear el turno", Toast.LENGTH_SHORT).show()
-                            }
-
-                            // Guardar nuevo turno en Firebase
-                            atraccionRef.child("Turno").setValue(nuevoTurno)
-                        }.create()
-
-                    dialog.show()
-
-                } else {
-                    // Si la atracción no tiene campo UltimoTurno aún, se crea con 1
-                    atraccionRef.child("Turno").setValue(1)
+                    } else {
+                        // Si la atracción no tiene campo UltimoTurno aún, se crea con 1
+                        atraccionRef.child("Turno").setValue(1)
+                    }
                 }
             }
         }
