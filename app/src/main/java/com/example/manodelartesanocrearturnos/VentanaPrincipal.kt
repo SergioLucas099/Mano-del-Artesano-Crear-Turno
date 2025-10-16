@@ -50,6 +50,8 @@ class VentanaPrincipal : AppCompatActivity() {
         var valorNombre = ""
         var valorTurno = ""
 
+        ContadorPersonas.setText("1")
+
         // Obtener tiempo acumulado de Firebase
         databaseReference = FirebaseDatabase.getInstance()
             .getReference("TiempoAcumulado")
@@ -145,11 +147,16 @@ class VentanaPrincipal : AppCompatActivity() {
 
         // Crear Turno
         btnSubirInfo.setOnClickListener {
+            val validarContadorPersonas = ContadorPersonas.text.toString().trim()
+
+            if (validarContadorPersonas.isEmpty()) {
+                ContadorPersonas.setText("1")
+            }
+
             val BDTurnosAcumulados = FirebaseDatabase.getInstance().getReference("TurnosAcumulados")
             val numeroTelefonico = edtxNumero.text?.toString()?.trim() ?: ""
             val IdTurnoE = BDTurnosAcumulados.push().key.toString()
             val nombreAtraccion = AtraccionSeleccionada.text.toString()
-
 
             val atraccionRef = FirebaseDatabase.getInstance()
                 .getReference("Atracciones")
@@ -244,7 +251,7 @@ class VentanaPrincipal : AppCompatActivity() {
                         // acumular tiempo
 
                         if (tiempoAcumuladoSegundos == 0){
-                            tiempoPreview = "0"
+                            tiempoPreview = "00:00"
                         }else{
                             tiempoPreview = formatearTiempo(tiempoAcumuladoSegundos + contador * 20)
                         }
@@ -288,28 +295,88 @@ class VentanaPrincipal : AppCompatActivity() {
                                     Toast.makeText(this, "Turno $turnoFormateado para $valorNombre creado con exito", Toast.LENGTH_SHORT).show()
                                     // 📲 Enviar WhatsApp según el tiempo
                                     // ---------------------------
+
                                     val valorNombre = nombreAtraccion
 
-                                    val mensajeSintiempoEspera = "⚠️ Aviso de turno ⚠️\n\nDirígete de inmediato a la Atracción: *$valorNombre*\nEl turno *$turnoFormateado* es el siguiente en pasar\n\nGracias por visitar el Pueblito de Barro, disfruta de tu atracción"
-                                    val mensajemenor10min = "⚠️ Aviso de turno ⚠️\n\nDirígete de inmediato a la Atracción: *$valorNombre*\nEl turno *$turnoFormateado* está próximo a ser llamado en *$tiempoFinal min* ⏳\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
-                                    val mensajeentre11a30min = "⚠️ Aviso de turno ⚠️\n\nTu turno es el *'$turnoFormateado'*, puedes hacer un recorrido corto por el parque.\nSeras llamado en *$tiempoFinal min* ⏳, pero por favor mantente cerca de '$valorNombre', ya que podrías ser llamado en cualquier momento.\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
-                                    val mensajemayor30min = "⚠️ Aviso de turno ⚠️\n\nTu turno es el *'$turnoFormateado'*, te invitamos a que conozcas todo lo que Pueblito de Barro tiene para ti mientras llega tu turno para '$valorNombre'\nSeras llamado en *$tiempoFinal min* ⏳.\n\nPodrás consultar más a detalle el estado de tu turno en el sitio web:\n*https://sergiolucas099.github.io/Mano_Artesano_Web.github.io/*"
+                                    // 🔗 Usamos un enlace corto (por ejemplo de TinyURL o Bitly)
+                                    val enlaceTurno = "https://tinyurl.com/4tj7uvwj"
 
+                                    // 📩 Mensajes adaptados
+                                    val mensajeSintiempoEspera = """
+                                        ⚠️ Aviso de turno ⚠️
+                                    
+                                        Dirígete de inmediato a la Atracción: *$valorNombre*
+                                        El turno *$turnoFormateado* es el siguiente en pasar
+                                    
+                                        Gracias por visitar el Pueblito de Barro, disfruta de tu atracción
+                                    """.trimIndent()
+
+                                    val mensajemenor10min = """                                        
+                                        👋 ¡Hola!
+                                        Soy del equipo de Pueblito de Barro.
+                                        
+                                        Por favor, envíame un mensaje para poder visualizar el enlace con la información de tu turno. ✅
+                                                                                
+                                        ⚠️ Aviso de turno ⚠️
+                                    
+                                        Dirígete de inmediato a la Atracción: *$valorNombre*
+                                        El turno *$turnoFormateado* está próximo a ser llamado en *$tiempoFinal min* ⏳
+                                    
+                                        Podrás consultar más a detalle el estado de tu turno aquí:
+                                        $enlaceTurno
+                                        
+                                        🚨 Importante: Si pierdes tu turno en La Mano del Artesano, deberás hacer fila nuevamente en La Mano Del Artesano 2.
+                                        
+                                        Gracias por visitar el Pueblito de Barro, ¡disfruta de tu atracción! 🎡
+                                    """.trimIndent()
+
+                                    val mensajeentre11a30min = """
+                                        👋 ¡Hola!
+                                        Soy del equipo de Pueblito de Barro.
+                                        
+                                        Por favor, envíame un mensaje para poder visualizar el enlace con la información de tu turno. ✅
+                                        
+                                        ⚠️ Aviso de turno ⚠️
+                                    
+                                        Tu turno es el *$turnoFormateado*, puedes hacer un recorrido corto por el parque.
+                                        Serás llamado en *$tiempoFinal min* ⏳, pero por favor mantente cerca de *$valorNombre*, ya que podrías ser llamado en cualquier momento.
+                                    
+                                        Consulta el estado de tu turno en:
+                                        $enlaceTurno
+                                        
+                                        🚨 Importante: Si pierdes tu turno en La Mano del Artesano, deberás hacer fila nuevamente en La Mano Del Artesano 2.
+                                        
+                                        Gracias por visitar el Pueblito de Barro, ¡disfruta de tu atracción! 🎡
+                                    """.trimIndent()
+
+                                    val mensajemayor30min = """
+                                        👋 ¡Hola!
+                                        Soy del equipo de Pueblito de Barro.
+                                        
+                                        Por favor, envíame un mensaje para poder visualizar el enlace con la información de tu turno. ✅                      
+                                        
+                                        ⚠️ Aviso de turno ⚠️
+                                    
+                                        Tu turno es el *$turnoFormateado*, te invitamos a que conozcas todo lo que Pueblito de Barro tiene para ti mientras llega tu turno para *$valorNombre*.
+                                        Serás llamado en *$tiempoFinal min* ⏳.
+                                    
+                                        Consulta el estado de tu turno en:
+                                        $enlaceTurno
+                                        
+                                        🚨 Importante: Si pierdes tu turno en La Mano del Artesano, deberás hacer fila en La Mano Del Artesano 2.
+                                        
+                                        Gracias por visitar el Pueblito de Barro, ¡disfruta de tu atracción! 🎡
+                                    """.trimIndent()
+
+                                // Selección del mensaje según tiempo
                                     val mensajeEnviar = when {
-                                        // Rango 1: exactamente 0
                                         tiempoAcumuladoSegundos == 0 -> mensajeSintiempoEspera
-
-                                        // Rango 2: menor a 10 min, excluyendo cero
                                         tiempoAcumuladoSegundos in 1..599 -> mensajemenor10min
-
-                                        // Rango 3: entre 11 y 30 min (660s = 11:00)
                                         tiempoAcumuladoSegundos in 660..1800 -> mensajeentre11a30min
-
-                                        // Rango 4: mayor a 30 min
                                         else -> mensajemayor30min
                                     }
 
-
+                                    // ✅ Formato correcto del número
                                     val numeroTelefonicoConPrefijo = if (numeroTelefonico.startsWith("+57")) {
                                         numeroTelefonico
                                     } else {
@@ -324,6 +391,7 @@ class VentanaPrincipal : AppCompatActivity() {
                                     } catch (e: Exception) {
                                         Toast.makeText(this, "WhatsApp no está instalado", Toast.LENGTH_SHORT).show()
                                     }
+
                                     // Quitar el foco del EditText
                                     edtxNumero.clearFocus()
 
